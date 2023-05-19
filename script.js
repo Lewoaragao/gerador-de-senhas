@@ -61,10 +61,11 @@ function gerarSenha() {
          * https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Math/random
          * vai gerar um tipo aleatório para concatenar na senha
          */
-        const tipoAleatorio = Math.floor(Math.random() * maxTiposAceitos)
+        const tipoAleatorio = Math.floor(Math.random() * listaTipos.length)
+        const elementoTipo = listaTipos[tipoAleatorio]
 
         // verifica o tipo gerado aleatório para concanetar na senha
-        switch (tipoAleatorio) {
+        switch (elementoTipo) {
             case 1:
                 senha.value += getLetraMaiusculaAleatoria()
                 break
