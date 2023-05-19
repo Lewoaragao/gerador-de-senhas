@@ -11,47 +11,91 @@ const arrayLetrasMaiusculas = letrasMaiusculas.split('')
 const arrayLetrasMinusculas = letrasMinusculas.split('')
 const arrayCaracteresEspeciais = caracteresEspeciais.split('')
 
-let tiposAceitoUsuario = '' // concatena aqui os tipos escolhidos pelo usuário
+// inicializando valores
+window.onload = () => {
+    senha.value = ''
+    valueLabelTamanho.innerHTML = range.value
+}
 
 function visualizaValor(value, id) {
     document.getElementById(id).innerHTML = value
 }
 
 function gerarSenha() {
-    let minTiposAceitos = 1
-    let maxTiposAceitos = minTiposAceitos
+    let maxTiposAceitos = 1
+    let listaTipos = []
 
-    checkLetrasMaiusculas.checked ? maxTiposAceitos++ : null
-    checkLetrasMinusculas.checked ? maxTiposAceitos++ : null
-    checkCaracteresEspeciais.checked ? maxTiposAceitos++ : null
-
-    // inicializando input senha
+    // limpando input senha
     senha.value = ''
+    senha.value = getNumeroAleatorio()
 
-    for (let i = 1; i <= range.value; i++) {
+    if(checkLetrasMaiusculas.checked) {
+        maxTiposAceitos++
+        listaTipos.push(1)
+        senha.value += getLetraMaiusculaAleatoria()
+    }
 
-        // fonte do cálculo a seguir
-        // https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-        // vai gerar um tipo aleatório para concatenar na senha
-        const tipoAleatorio = Math.floor(Math.random() * (maxTiposAceitos + 1 - minTiposAceitos) + minTiposAceitos)
+    if(checkLetrasMinusculas.checked) {
+        maxTiposAceitos++
+        listaTipos.push(2)
+        senha.value += getLetraMinusculaAleatoria()
+    }
+    
+    if(checkCaracteresEspeciais.checked) {
+        maxTiposAceitos++
+        listaTipos.push(3)
+        senha.value += getCaractereEspecialAleatorio()
+    }
+
+    const arraySenha = senha.value.split('') // criando um array com cada elemento da senha
+
+    /**
+     * menos a quantidade de tipos ja incluidos
+     * pois logo que marcado o checkbox já é
+     * colocado um valor do tipo escolhido
+     */
+    for (let i = 1; i <= range.value - arraySenha.length; i++) {
+
+        /**
+         * fonte do cálculo a seguir
+         * https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+         * vai gerar um tipo aleatório para concatenar na senha
+         */
+        const tipoAleatorio = Math.floor(Math.random() * maxTiposAceitos)
 
         // verifica o tipo gerado aleatório para concanetar na senha
         switch (tipoAleatorio) {
             case 1:
-                senha.value += Math.floor(Math.random() * 10) // gera um número aleatório de 0 a 10
+                senha.value += getLetraMaiusculaAleatoria()
                 break
             case 2:
-                senha.value += arrayLetrasMaiusculas[Math.floor(Math.random() * arrayLetrasMaiusculas.length + 1)]
+                senha.value += getLetraMinusculaAleatoria()
                 break
             case 3:
-                senha.value += arrayLetrasMinusculas[Math.floor(Math.random() * arrayLetrasMinusculas.length + 1)]
+                senha.value += getCaractereEspecialAleatorio()
                 break
-            case 4:
-                senha.value += arrayCaracteresEspeciais[Math.floor(Math.random() * arrayCaracteresEspeciais.length + 1)]
+            default:
+                senha.value += getNumeroAleatorio()
                 break
         }
 
     }
+}
+
+function getNumeroAleatorio() {
+    return Math.floor(Math.random() * 10) // gera um número aleatório de 0 a 9
+}
+
+function getLetraMaiusculaAleatoria() {
+    return arrayLetrasMaiusculas[Math.floor(Math.random() * arrayLetrasMaiusculas.length)]
+}
+
+function getLetraMinusculaAleatoria() {
+    return arrayLetrasMinusculas[Math.floor(Math.random() * arrayLetrasMinusculas.length)]
+}
+
+function getCaractereEspecialAleatorio() {
+    return arrayCaracteresEspeciais[Math.floor(Math.random() * arrayCaracteresEspeciais.length)]
 }
 
 // método para copiar a senha como se estivesse copiando com um CTRL + C 
