@@ -1,12 +1,15 @@
-const range = document.querySelector("input[type='range']")
-const valueLabelTamanho = document.getElementById('valueLabelTamanho')
-const senha = document.querySelector("input[type='text']")
-const checkLetrasMaiusculas = document.querySelector("#letrasMaiusculas")
-const checkLetrasMinusculas = document.querySelector("#letrasMinusculas")
-const checkCaracteresEspeciais = document.querySelector("#caracteresEspeciais")
+// const range = document.querySelector('input[type="range"]')
+const inputRange = document.querySelector('#inputTamanho')
+const valueLabelTamanho = document.querySelector('#valueLabelTamanho')
+// const senha = document.querySelector('input[type="text"]')
+const inputSenha = document.querySelector('#inputSenha')
+const btnCopiar = document.querySelector('#btnCopiar')
+const checkLetrasMaiusculas = document.querySelector('#letrasMaiusculas')
+const checkLetrasMinusculas = document.querySelector('#letrasMinusculas')
+const checkCaracteresEspeciais = document.querySelector('#caracteresEspeciais')
 const letrasMaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const letrasMinusculas = 'abcdefghijklmnopqrstuvwxyz'
-const caracteresEspeciais = `"!@#$%¨&*()-_=+{}[]/~|;:§`
+const caracteresEspeciais = `'!@#$%¨&*()-_=+{}[]/~|;:§`
 const numeros = '0123456789'
 const TIPO_NUMERO = 0
 const TIPO_LETRA_MAIUSCULA = 1
@@ -16,8 +19,9 @@ const LISTA_TIPO = [TIPO_NUMERO, TIPO_LETRA_MAIUSCULA, TIPO_LETRA_MINUSCULA, TIP
 
 // inicializando valores
 window.onload = () => {
-    senha.value = ''
-    valueLabelTamanho.innerHTML = range.value
+    inputSenha.value = ''
+    valueLabelTamanho.innerHTML = inputRange.value
+    inputSenha.value.length == 0 ? btnCopiar.classList.add('disabled') : ''
 }
 
 /**
@@ -44,7 +48,7 @@ function gerarSenha() {
     let listaTiposSelecionadosSort = []
 
     // limpando input senha
-    senha.value = ''
+    inputSenha.value = ''
 
     // tipo padrão
     listaTiposSelecionados.push(TIPO_NUMERO)
@@ -61,21 +65,21 @@ function gerarSenha() {
     listaTiposSelecionadosSort.forEach(e => {
         switch (e) {
             case 0:
-                senha.value += getNumeroAleatorio()
+                inputSenha.value += getNumeroAleatorio()
                 break
             case 1:
-                senha.value += checkLetrasMaiusculas.checked ? getLetraMaiusculaAleatoria() : getNumeroAleatorio()
+                inputSenha.value += checkLetrasMaiusculas.checked ? getLetraMaiusculaAleatoria() : getNumeroAleatorio()
                 break
             case 2:
-                senha.value += checkLetrasMinusculas.checked ? getLetraMinusculaAleatoria() : getNumeroAleatorio()
+                inputSenha.value += checkLetrasMinusculas.checked ? getLetraMinusculaAleatoria() : getNumeroAleatorio()
                 break
             case 3:
-                senha.value += checkCaracteresEspeciais.checked ? getCaractereEspecialAleatorio() : getNumeroAleatorio()
+                inputSenha.value += checkCaracteresEspeciais.checked ? getCaractereEspecialAleatorio() : getNumeroAleatorio()
                 break
         }
     })
 
-    const max = range.value - senha.value.length
+    const max = inputRange.value - inputSenha.value.length
 
     /**
      * menos a quantidade de tipos ja incluidos
@@ -99,19 +103,21 @@ function gerarSenha() {
          */
         switch (elementoTipo) {
             case 0:
-                senha.value += getNumeroAleatorio()
+                inputSenha.value += getNumeroAleatorio()
                 break
             case 1:
-                senha.value += getLetraMaiusculaAleatoria()
+                inputSenha.value += getLetraMaiusculaAleatoria()
                 break
             case 2:
-                senha.value += getLetraMinusculaAleatoria()
+                inputSenha.value += getLetraMinusculaAleatoria()
                 break
             case 3:
-                senha.value += getCaractereEspecialAleatorio()
+                inputSenha.value += getCaractereEspecialAleatorio()
                 break
         }
     }
+
+    btnCopiar.classList.remove('disabled')
 }
 
 /**
@@ -154,8 +160,35 @@ function getCaractereEspecialAleatorio() {
  * e podendo após ser copiado usar o comando CTRL + V para colar onde quiser
  */
 function copiarSenha() {
-    senha.select()
-    senha.setSelectionRange(0, 9999); // para dispositivos móveis
-    navigator.clipboard.writeText(senha.value);
-    alert("Senha copiada com sucesso!")
+    btnCopiar.style.animation = 'none';
+
+    setTimeout(function () {
+        btnCopiar.innerHTML = `<i class='bi bi-clipboard-check'></i>`
+        btnCopiar.classList.remove('btn-secondary')
+        btnCopiar.classList.add('btn-success', 'disabled')
+    }, 0);
+
+    setTimeout(function () {
+        btnCopiar.innerHTML = `<i class='bi bi-clipboard'></i>`
+        btnCopiar.classList.remove('btn-success', 'disabled')
+        btnCopiar.classList.add('btn-secondary')
+    }, 700);
+
+    inputSenha.select()
+    inputSenha.setSelectionRange(0, 9999); // para dispositivos móveis
+    navigator.clipboard.writeText(inputSenha.value);
+    inputSenha.blur()
+}
+
+/**
+ * limpa campo senha e
+ * desabilita botão de copiar
+ * @returns {void}
+ */
+function limparTela() {
+    inputSenha.value = ''
+    btnCopiar.classList.add('disabled')
+    checkLetrasMaiusculas.checked = false
+    checkLetrasMinusculas.checked = false
+    checkCaracteresEspeciais.checked = false
 }

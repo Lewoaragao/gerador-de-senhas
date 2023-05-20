@@ -10,24 +10,25 @@
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="bg-light">
+<body class="bg-dark">
     <div class="container vh-100 d-flex justify-content-around align-items-center flex-wrap">
-        <div class="border border-warning rounded p-4">
+        <div class="border border-warning rounded p-4 bg-amarelo img-thumbnail">
             <h1 class="fw-bold">Gerador de Senhas</h1>
 
             <div class="input-group flex-nowrap">
-                <input class="form-control" type="text" aria-label="readonly input example" readonly>
-                <button class="btn btn-outline-secondary" onclick="copiarSenha()"><i
+                <input class="form-control" type="text" disabled id="inputSenha">
+                <button class="btn btn-secondary" onclick="copiarSenha()" id="btnCopiar"><i
                         class="bi bi-clipboard"></i></button>
             </div>
 
             <div>
-                <input type="range" class="my-3 me-3" id="tamanho" min="4" max="50"
+                <input type="range" class="my-3 me-3" id="inputTamanho" min="4" max="50"
                     oninput="visualizaValor(this.value, 'valueLabelTamanho')">
-                <label for="tamanho" id="labelTamanho" class="form-label border-bottom">
-                    Tamanho: <span id="valueLabelTamanho"></span>
+                <label for="inputTamanho" class="form-label border-bottom">
+                    <span class="fw-semibold">Tamanho:</span> <span id="valueLabelTamanho"></span>
                 </label>
             </div>
 
@@ -53,6 +54,7 @@
             </div>
 
             <button class="btn btn-primary mt-3" onclick="gerarSenha()">Gerar</button>
+            <button class="btn btn-secondary mt-3" onclick="limparTela()">Limpar</button>
         </div>
         <div>
             <img class="img-thumbnail" width="300px" src="logo-gerador-de-senhas.jpg" alt="logo gerador de senhas">
