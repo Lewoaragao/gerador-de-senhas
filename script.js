@@ -7,9 +7,12 @@ const checkCaracteresEspeciais = document.querySelector("#caracteresEspeciais")
 const letrasMaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const letrasMinusculas = 'abcdefghijklmnopqrstuvwxyz'
 const caracteresEspeciais = `"!@#$%¨&*()-_=+{}[]/~|;:§`
-const arrayLetrasMaiusculas = letrasMaiusculas.split('')
-const arrayLetrasMinusculas = letrasMinusculas.split('')
-const arrayCaracteresEspeciais = caracteresEspeciais.split('')
+const numeros = '0123456789'
+const TIPO_NUMERO = 0
+const TIPO_LETRA_MAIUSCULA = 1
+const TIPO_LETRA_MINUSCULA = 2
+const TIPO_CARACTERE_ESPECIAL = 3
+const LISTA_TIPO = [TIPO_NUMERO, TIPO_LETRA_MAIUSCULA, TIPO_LETRA_MINUSCULA, TIPO_CARACTERE_ESPECIAL]
 
 // inicializando valores
 window.onload = () => {
@@ -17,55 +20,86 @@ window.onload = () => {
     valueLabelTamanho.innerHTML = range.value
 }
 
+/**
+ * valor passado do input range para o id
+ * do elemento span que foi feito para mostrar
+ * o valor
+ * @param {*} value 
+ * @param {*} id 
+ */
 function visualizaValor(value, id) {
     document.getElementById(id).innerHTML = value
 }
 
+/**
+ * ao clicar gera uma senha aleatória
+ * de acordo com as opções marcadas pelo usuário
+ * por padrão serão gerados somente números
+ * 
+ * @returns {string} senha aleatória
+ */
 function gerarSenha() {
-    let maxTiposAceitos = 1
-    let listaTipos = []
+    let listaTiposSelecionados = []
+    let listaTiposSelecionadosSort = []
 
-    // limpando input senha
-    senha.value = ''
-    senha.value = getNumeroAleatorio()
+    senha.value = '' // limpando input senha
+    // senha.value += getNumeroAleatorio() // iniciando com número
+    listaTiposSelecionados.push(TIPO_NUMERO) // tipo padrão
 
-    if(checkLetrasMaiusculas.checked) {
-        maxTiposAceitos++
-        listaTipos.push(1)
-        senha.value += getLetraMaiusculaAleatoria()
+    // verifica os tipos marcados para adicionar a lista tipos selecionados
+    checkLetrasMaiusculas.checked ? listaTiposSelecionados.push(TIPO_LETRA_MAIUSCULA) : ''
+    checkLetrasMinusculas.checked ? listaTiposSelecionados.push(TIPO_LETRA_MINUSCULA) : ''
+    checkCaracteresEspeciais.checked ? listaTiposSelecionados.push(TIPO_CARACTERE_ESPECIAL) : ''
+
+    // embaralha a lista para que não comece sempre com o mesmo tipo
+    listaTiposSelecionadosSort = embaralhaLista(listaTiposSelecionados)
+
+    // adiciona o primeiro tipo aleatório sendo um dos selecionados ou o tipo padrão (número)
+    if (listaTiposSelecionadosSort.length > 0) {
+        listaTiposSelecionadosSort.forEach(e => {
+            switch (e) {
+                case 0:
+                    senha.value += getNumeroAleatorio()
+                    break
+                case 1:
+                    senha.value += checkLetrasMaiusculas.checked ? getLetraMaiusculaAleatoria() : getNumeroAleatorio()
+                    break
+                case 2:
+                    senha.value += checkLetrasMinusculas.checked ? getLetraMinusculaAleatoria() : getNumeroAleatorio()
+                    break
+                case 3:
+                    senha.value += checkCaracteresEspeciais.checked ? getCaractereEspecialAleatorio() : getNumeroAleatorio()
+                    break
+            }
+        })
     }
 
-    if(checkLetrasMinusculas.checked) {
-        maxTiposAceitos++
-        listaTipos.push(2)
-        senha.value += getLetraMinusculaAleatoria()
-    }
-    
-    if(checkCaracteresEspeciais.checked) {
-        maxTiposAceitos++
-        listaTipos.push(3)
-        senha.value += getCaractereEspecialAleatorio()
-    }
-
-    const arraySenha = senha.value.split('') // criando um array com cada elemento da senha
+    const max = range.value - senha.value.length
 
     /**
      * menos a quantidade de tipos ja incluidos
      * pois logo que marcado o checkbox já é
      * colocado um valor do tipo escolhido
      */
-    for (let i = 1; i <= range.value - arraySenha.length; i++) {
+    for (let i = 1; i <= max; i++) {
 
         /**
          * fonte do cálculo a seguir
          * https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Math/random
          * vai gerar um tipo aleatório para concatenar na senha
          */
-        const tipoAleatorio = Math.floor(Math.random() * listaTipos.length)
-        const elementoTipo = listaTipos[tipoAleatorio]
+        const tipoAleatorio = Math.floor(Math.random() * listaTiposSelecionados.length)
+        const elementoTipo = listaTiposSelecionados[tipoAleatorio]
 
-        // verifica o tipo gerado aleatório para concanetar na senha
+        /**
+         * verifica o tipo gerado aleatório para concanetar na senha
+         * caso o tipo esteja selecionado concatena aquele tipo,
+         * caso não, gera um número aleatório para completar a senha
+         */
         switch (elementoTipo) {
+            case 0:
+                senha.value += getNumeroAleatorio()
+                break
             case 1:
                 senha.value += getLetraMaiusculaAleatoria()
                 break
@@ -75,32 +109,49 @@ function gerarSenha() {
             case 3:
                 senha.value += getCaractereEspecialAleatorio()
                 break
-            default:
-                senha.value += getNumeroAleatorio()
-                break
         }
-
     }
 }
 
+/**
+ * Para embaralhar todos os tipos de lista
+ * retornando com os mesmos valores
+ * porém em ordem diferente
+ * @param {array} lista 
+ * @returns {array} lista embaralhada 
+ */
+function embaralhaLista(lista) {
+    // Loop em todos os elementos
+    for (let i = lista.length - 1; i > 0; i--) {
+        // Escolhendo elemento aleatório
+        const j = Math.floor(Math.random() * (i + 1));
+        // Reposicionando elemento
+        [lista[i], lista[j]] = [lista[j], lista[i]];
+    }
+    // Retornando lista com aleatoriedade
+    return lista;
+}
+
 function getNumeroAleatorio() {
-    return Math.floor(Math.random() * 10) // gera um número aleatório de 0 a 9
+    return numeros[Math.floor(Math.random() * numeros.length)]
 }
 
 function getLetraMaiusculaAleatoria() {
-    return arrayLetrasMaiusculas[Math.floor(Math.random() * arrayLetrasMaiusculas.length)]
+    return letrasMaiusculas[Math.floor(Math.random() * letrasMaiusculas.length)]
 }
 
 function getLetraMinusculaAleatoria() {
-    return arrayLetrasMinusculas[Math.floor(Math.random() * arrayLetrasMinusculas.length)]
+    return letrasMinusculas[Math.floor(Math.random() * letrasMinusculas.length)]
 }
 
 function getCaractereEspecialAleatorio() {
-    return arrayCaracteresEspeciais[Math.floor(Math.random() * arrayCaracteresEspeciais.length)]
+    return caracteresEspeciais[Math.floor(Math.random() * caracteresEspeciais.length)]
 }
 
-// método para copiar a senha como se estivesse copiando com um CTRL + C 
-// e podendo após ser copiado usar o comando CTRL + V para colar onde quiser
+/**
+ * método para copiar a senha como se estivesse copiando com um CTRL + C 
+ * e podendo após ser copiado usar o comando CTRL + V para colar onde quiser
+ */
 function copiarSenha() {
     senha.select()
     senha.setSelectionRange(0, 9999); // para dispositivos móveis
