@@ -24,11 +24,11 @@ window.onload = () => {
  * valor passado do input range para o id
  * do elemento span que foi feito para mostrar
  * o valor
- * @param {*} value 
- * @param {*} id 
+ * @param {integer} value 
+ * @param {string} idHtml 
  */
-function visualizaValor(value, id) {
-    document.getElementById(id).innerHTML = value
+function visualizaValor(value, idHtml) {
+    document.getElementById(idHtml).innerHTML = value
 }
 
 /**
@@ -39,12 +39,15 @@ function visualizaValor(value, id) {
  * @returns {string} senha aleatória
  */
 function gerarSenha() {
+    // inicializando listas
     let listaTiposSelecionados = []
     let listaTiposSelecionadosSort = []
 
-    senha.value = '' // limpando input senha
-    // senha.value += getNumeroAleatorio() // iniciando com número
-    listaTiposSelecionados.push(TIPO_NUMERO) // tipo padrão
+    // limpando input senha
+    senha.value = ''
+
+    // tipo padrão
+    listaTiposSelecionados.push(TIPO_NUMERO)
 
     // verifica os tipos marcados para adicionar a lista tipos selecionados
     checkLetrasMaiusculas.checked ? listaTiposSelecionados.push(TIPO_LETRA_MAIUSCULA) : ''
@@ -55,24 +58,22 @@ function gerarSenha() {
     listaTiposSelecionadosSort = embaralhaLista(listaTiposSelecionados)
 
     // adiciona o primeiro tipo aleatório sendo um dos selecionados ou o tipo padrão (número)
-    if (listaTiposSelecionadosSort.length > 0) {
-        listaTiposSelecionadosSort.forEach(e => {
-            switch (e) {
-                case 0:
-                    senha.value += getNumeroAleatorio()
-                    break
-                case 1:
-                    senha.value += checkLetrasMaiusculas.checked ? getLetraMaiusculaAleatoria() : getNumeroAleatorio()
-                    break
-                case 2:
-                    senha.value += checkLetrasMinusculas.checked ? getLetraMinusculaAleatoria() : getNumeroAleatorio()
-                    break
-                case 3:
-                    senha.value += checkCaracteresEspeciais.checked ? getCaractereEspecialAleatorio() : getNumeroAleatorio()
-                    break
-            }
-        })
-    }
+    listaTiposSelecionadosSort.forEach(e => {
+        switch (e) {
+            case 0:
+                senha.value += getNumeroAleatorio()
+                break
+            case 1:
+                senha.value += checkLetrasMaiusculas.checked ? getLetraMaiusculaAleatoria() : getNumeroAleatorio()
+                break
+            case 2:
+                senha.value += checkLetrasMinusculas.checked ? getLetraMinusculaAleatoria() : getNumeroAleatorio()
+                break
+            case 3:
+                senha.value += checkCaracteresEspeciais.checked ? getCaractereEspecialAleatorio() : getNumeroAleatorio()
+                break
+        }
+    })
 
     const max = range.value - senha.value.length
 
